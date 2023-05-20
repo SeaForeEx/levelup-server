@@ -1,0 +1,35 @@
+[
+  {
+      "model": "levelupapi.event",
+      "pk": 1,
+      "fields": {
+          "game": 1,
+          "description": "Roll the dice on the first ever Zelda Board Game!",
+          "date": "2023-05-27",
+          "time": "17:30",
+          "organizer": 1
+      }
+  },
+  {
+    "model": "levelupapi.event",
+    "pk": 2,
+    "fields": {
+        "game": 2,
+        "description": "Relive the fun of the Zelda animated series!",
+        "date": "2023-08-27",
+        "time": "18:30",
+        "organizer": 1
+    }
+  },
+  {
+    "model": "levelupapi.event",
+    "pk": 3,
+    "fields": {
+        "game": 3,
+        "description": "It's Zelda, who cares, you know you want to be here!",
+        "date": "2023-01-27",
+        "time": "19:30",
+        "organizer": 1
+    }
+  }
+]
