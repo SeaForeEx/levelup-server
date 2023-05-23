@@ -36,8 +36,8 @@ class EventView(ViewSet):
         """POST Event
         Returns JSON instance
         """
-        game = Game.objects.get(id=request.data["gameId"])
-        organizer = Gamer.objects.get(id=request.data["userId"])
+        organizer = Gamer.objects.get(uid=request.data["userId"])
+        game = Game.objects.get(pk=request.data["game"])
         
         event = Event.objects.create(
             description=request.data["description"],
@@ -58,9 +58,9 @@ class EventView(ViewSet):
         event.date = request.data["date"]
         event.time = request.data["time"]
         
-        game_id = Game.objects.get(pk=request.data["gameId"])
-        organizer = Gamer.objects.get(pk=request.data["userId"])
-        event.game_id = game_id
+        game = Game.objects.get(pk=request.data["game"])
+        organizer = Gamer.objects.get(uid=request.data["userId"])
+        event.game = game
         event.organizer = organizer
         event.save()
         
