@@ -76,6 +76,8 @@ class EventView(ViewSet):
 class EventSerializer(serializers.ModelSerializer):
     """JSON serializer for events
     """
+    time = serializers.TimeField(format="%I:%M %p")
+    date = serializers.DateField(format="%B %d, %Y")
     class Meta:
         model = Event
         fields = ('id', 'game', 'description', 'date', 'time', 'organizer')
