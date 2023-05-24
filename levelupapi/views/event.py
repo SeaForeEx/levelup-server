@@ -8,6 +8,23 @@ from levelupapi.models import Event, Game, Gamer
 
 class EventView(ViewSet):
     """Level up events view"""
+    
+    def create(self, request):
+        """POST Event
+        Returns JSON instance
+        """
+        organizer = Gamer.objects.get(uid=request.data["userId"])
+        game = Game.objects.get(pk=request.data["game"])
+        
+        event = Event.objects.create(
+            description=request.data["description"],
+            date=request.data["date"],
+            time=request.data["time"],
+            game=game,
+            organizer=organizer,
+        )
+        serializer = EventSerializer(event)
+        return Response(serializer.data)
 
     def retrieve(self, request, pk):
         """Handle GET requests for single event
@@ -30,23 +47,6 @@ class EventView(ViewSet):
         """
         events = Event.objects.all()
         serializer = EventSerializer(events, many=True)
-        return Response(serializer.data)
-    
-    def create(self, request):
-        """POST Event
-        Returns JSON instance
-        """
-        organizer = Gamer.objects.get(uid=request.data["userId"])
-        game = Game.objects.get(pk=request.data["game"])
-        
-        event = Event.objects.create(
-            description=request.data["description"],
-            date=request.data["date"],
-            time=request.data["time"],
-            game=game,
-            organizer=organizer,
-        )
-        serializer = EventSerializer(event)
         return Response(serializer.data)
     
     def update(self, request, pk):
