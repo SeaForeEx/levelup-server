@@ -7,6 +7,25 @@ from levelupapi.models import Game, Gamer, GameType
 class GameView(ViewSet):
     """Game view set"""
 
+    def create(self, request):
+      """Handle POST operations
+      Returns
+        Response -- JSON serialized game instance
+      """
+      gamer = Gamer.objects.get(uid=request.data["userId"])
+      game_type = GameType.objects.get(pk=request.data["gameType"])
+
+      game = Game.objects.create(
+          title=request.data["title"],
+          maker=request.data["maker"],
+          number_of_players=request.data["numberOfPlayers"],
+          skill_level=request.data["skillLevel"],
+          game_type=game_type,
+          gamer=gamer,
+      )
+      serializer = GameSerializer(game)
+      return Response(serializer.data)
+
     def retrieve(self, request, pk):
         """GET requests for single game
         Returns JSON serialized game"""
@@ -29,25 +48,6 @@ class GameView(ViewSet):
         
         serializer = GameSerializer(games, many=True)
         return Response(serializer.data)
-      
-    def create(self, request):
-      """Handle POST operations
-      Returns
-        Response -- JSON serialized game instance
-      """
-      gamer = Gamer.objects.get(uid=request.data["userId"])
-      game_type = GameType.objects.get(pk=request.data["gameType"])
-
-      game = Game.objects.create(
-          title=request.data["title"],
-          maker=request.data["maker"],
-          number_of_players=request.data["numberOfPlayers"],
-          skill_level=request.data["skillLevel"],
-          game_type=game_type,
-          gamer=gamer,
-      )
-      serializer = GameSerializer(game)
-      return Response(serializer.data)
   
     def update(self, request, pk):
         """Handle PUT requests for a game
