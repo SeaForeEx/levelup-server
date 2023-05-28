@@ -7,13 +7,13 @@ from levelupapi.models import Game, Gamer, GameType
 class GameView(ViewSet):
     """Game view set"""
 
-    def create(self, request):
+    def create(self, request): # request = http request
       """Handle POST operations
       Returns
         Response -- JSON serialized game instance
       """
-      gamer = Gamer.objects.get(uid=request.data["userId"])
-      game_type = GameType.objects.get(pk=request.data["gameType"])
+      gamer = Gamer.objects.get(uid=request.data["userId"]) # client side input data from form
+      game_type = GameType.objects.get(pk=request.data["gameType"]) # client side input data from form
 
       game = Game.objects.create(
           title=request.data["title"],
@@ -22,8 +22,8 @@ class GameView(ViewSet):
           skill_level=request.data["skillLevel"],
           game_type=game_type,
           gamer=gamer,
-      )
-      serializer = GameSerializer(game)
+      ) # request.data is resolve(data) in createGame() on front end
+      serializer = GameSerializer(game) # serializer is what gets sent to server
       return Response(serializer.data)
 
     def retrieve(self, request, pk):
@@ -56,6 +56,7 @@ class GameView(ViewSet):
         Response -- Empty body with 204 status code
         """
 
+        # client is sending info to be updated in the database
         game = Game.objects.get(pk=pk)
         game.title = request.data["title"]
         game.maker = request.data["maker"]
