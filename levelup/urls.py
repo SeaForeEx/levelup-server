@@ -18,9 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import include
 from rest_framework import routers
-from levelupapi.views import GameTypeView, EventView, GameView
-from django.urls import path
-from levelupapi.views import register_user, check_user
+from levelupapi.views import register_user, check_user, GameTypeView, EventView, GameView
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'gametypes', GameTypeView, 'gametype')

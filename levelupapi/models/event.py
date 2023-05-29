@@ -9,3 +9,12 @@ class Event(models.Model):
     time = models.TimeField()
     organizer = models.ForeignKey(Gamer, on_delete=models.CASCADE)
     
+    @property
+    def joined(self):
+        """Custom Property"""
+        return self.__joined
+
+    @joined.setter
+    def joined(self, value):
+        self.__joined = value
+    
