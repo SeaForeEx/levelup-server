@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import serializers, status
 from rest_framework.decorators import action
 from levelupapi.models import Event, Game, Gamer, EventGamer
+from django.db.models import Count
 
 
 class EventView(ViewSet):
@@ -48,7 +49,7 @@ class EventView(ViewSet):
         """
         uid = request.META.get('HTTP_AUTHORIZATION')
         gamer = Gamer.objects.get(uid=uid)
-        events = Event.objects.all()
+        events = Event.objects.annotate(attendees_count=Count('attendees'))
         for event in events:
             # Check to see if there is a row in the Event Games table that has the passed in gamer and event
             event.joined = len(EventGamer.objects.filter(
@@ -105,9 +106,10 @@ class EventView(ViewSet):
 class EventSerializer(serializers.ModelSerializer):
     """JSON serializer for events
     """
+    attendees_count = serializers.IntegerField(default=None)
     time = serializers.TimeField(format="%I:%M %p")
     date = serializers.DateField(format="%B %d, %Y")
     class Meta:
         model = Event
-        fields = ('id', 'game', 'description', 'date', 'time', 'organizer', 'joined')
+        fields = ('id', 'game', 'description', 'date', 'time', 'organizer', 'joined', 'attendees_count')
         depth = 2
