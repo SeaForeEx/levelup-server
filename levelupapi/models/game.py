@@ -10,3 +10,13 @@ class Game(models.Model):
     gamer = models.ForeignKey(Gamer, on_delete=models.CASCADE)
     number_of_players = models.IntegerField()
     skill_level = models.IntegerField()
+
+    @property
+    def event_info(self):
+        """Event specific info"""
+        info = []
+        for event in self.events.all():
+            info.append(event.description)
+            info.append(event.date)
+            info.append(event.time)
+        return info

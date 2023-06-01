@@ -82,7 +82,7 @@ class GameSerializer(serializers.ModelSerializer):
     event_count = serializers.IntegerField(default=None)
     class Meta:
         model = Game
-        fields = ('id', 'game_type', 'title', 'maker', 'gamer', 'number_of_players', 'skill_level', 'event_count')
+        fields = ('id', 'game_type', 'title', 'maker', 'gamer', 'number_of_players', 'skill_level', 'event_count', 'event_info')
         depth = 2
 
         
