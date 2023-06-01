@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import serializers, status
 from rest_framework.serializers import ModelSerializer
 from levelupapi.models import Game, Gamer, GameType
+from django.db.models import Count
 
 class GameView(ViewSet):
     """Game view set"""
@@ -39,7 +40,7 @@ class GameView(ViewSet):
     def list(self, request):
         """GET requests for all games
         Returns JSON serialized list of games"""
-        games = Game.objects.all()
+        games = Game.objects.annotate(event_count=Count('events'))
         
         # filters games based on game type
         game_type = request.query_params.get('type', None)
@@ -78,9 +79,10 @@ class GameView(ViewSet):
 
 class GameSerializer(serializers.ModelSerializer):
     """JSON serializer for games"""
+    event_count = serializers.IntegerField(default=None)
     class Meta:
         model = Game
-        fields = ('id', 'game_type', 'title', 'maker', 'gamer', 'number_of_players', 'skill_level')
+        fields = ('id', 'game_type', 'title', 'maker', 'gamer', 'number_of_players', 'skill_level', 'event_count')
         depth = 2
 
         
