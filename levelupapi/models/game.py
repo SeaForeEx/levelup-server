@@ -4,12 +4,13 @@ from .game_type import GameType
 
 class Game(models.Model):
 
-    game_type = models.ForeignKey(GameType, on_delete=models.CASCADE)
+    game_type = models.ForeignKey(GameType, on_delete=models.CASCADE, related_name='games')
     title = models.CharField(max_length=50)
     maker = models.CharField(max_length=50)
-    gamer = models.ForeignKey(Gamer, on_delete=models.CASCADE)
+    gamer = models.ForeignKey(Gamer, on_delete=models.CASCADE, related_name='games')
     number_of_players = models.IntegerField()
     skill_level = models.IntegerField()
+    user_event_count = models.IntegerField()
 
     @property
     def event_info(self):
