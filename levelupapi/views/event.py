@@ -6,6 +6,7 @@ from rest_framework import serializers, status
 from rest_framework.decorators import action
 from levelupapi.models import Event, Game, Gamer, EventGamer
 from django.db.models import Count, Q
+from django.core.exceptions import ValidationError
 
 
 class EventView(ViewSet):
@@ -15,18 +16,25 @@ class EventView(ViewSet):
         """POST Event
         Returns JSON instance
         """
-        organizer = Gamer.objects.get(uid=request.data["userId"])
-        game = Game.objects.get(pk=request.data["game"])
         
-        event = Event.objects.create(
-            description=request.data["description"],
-            date=request.data["date"],
-            time=request.data["time"],
-            game=game,
-            organizer=organizer,
-        )
-        serializer = EventSerializer(event)
-        return Response(serializer.data)
+        organizer = Gamer.objects.get(uid=request.META['HTTP_AUTHORIZATION'])
+        serializer = CreateEventSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(organizer=organizer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+  
+        # organizer = Gamer.objects.get(uid=request.data["userId"])
+        # game = Game.objects.get(pk=request.data["game"])
+        
+        # event = Event.objects.create(
+        #     description=request.data["description"],
+        #     date=request.data["date"],
+        #     time=request.data["time"],
+        #     game=game,
+        #     organizer=organizer,
+        # )
+        # serializer = EventSerializer(event)
+        # return Response(serializer.data)
 
     def retrieve(self, request, pk):
         """Handle GET requests for single event
@@ -114,6 +122,10 @@ class EventView(ViewSet):
         event_gamer.delete()
         return Response({'message': 'Gamer left'}, status=status.HTTP_204_NO_CONTENT)
         
+class CreateEventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = ['id', 'game', 'description', 'date', 'time', 'organizer']
 
 class EventSerializer(serializers.ModelSerializer):
     """JSON serializer for events

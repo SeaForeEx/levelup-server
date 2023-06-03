@@ -4,6 +4,7 @@ from rest_framework import serializers, status
 from rest_framework.serializers import ModelSerializer
 from levelupapi.models import Game, Gamer, GameType, Event
 from django.db.models import Count, Q
+from django.core.exceptions import ValidationError
 
 class GameView(ViewSet):
     """Game view set"""
@@ -13,19 +14,26 @@ class GameView(ViewSet):
       Returns
         Response -- JSON serialized game instance
       """
-      gamer = Gamer.objects.get(uid=request.data["userId"]) # client side input data from form
-      game_type = GameType.objects.get(pk=request.data["gameType"]) # client side input data from form
+      gamer = Gamer.objects.get(uid=request.META['HTTP_AUTHORIZATION'])
+      serializer = CreateGameSerializer(data=request.data)
+      serializer.is_valid(raise_exception=True)
+      serializer.save(gamer=gamer)
+      return Response(serializer.data, status=status.HTTP_201_CREATED)
+  
+      
+    #   gamer = Gamer.objects.get(uid=request.data["userId"]) # client side input data from form
+    #   game_type = GameType.objects.get(pk=request.data["gameType"]) # client side input data from form
 
-      game = Game.objects.create(
-          title=request.data["title"],
-          maker=request.data["maker"],
-          number_of_players=request.data["numberOfPlayers"],
-          skill_level=request.data["skillLevel"],
-          game_type=game_type,
-          gamer=gamer,
-      ) # request.data is resolve(data) in createGame() on front end
-      serializer = GameSerializer(game) # serializer is what gets sent to server
-      return Response(serializer.data)
+    #   game = Game.objects.create(
+    #       title=request.data["title"],
+    #       maker=request.data["maker"],
+    #       number_of_players=request.data["numberOfPlayers"],
+    #       skill_level=request.data["skillLevel"],
+    #       game_type=game_type,
+    #       gamer=gamer,
+    #   ) # request.data is resolve(data) in createGame() on front end
+    #   serializer = GameSerializer(game) # serializer is what gets sent to server
+    #   return Response(serializer.data)
 
     def retrieve(self, request, pk):
         """GET requests for single game
@@ -79,6 +87,10 @@ class GameView(ViewSet):
         game.delete()
         return Response(None, status=status.HTTP_204_NO_CONTENT)
         
+class CreateGameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Game
+        fields = ['id', 'title', 'maker', 'number_of_players', 'skill_level', 'game_type']
 
 class GameSerializer(serializers.ModelSerializer):
     """JSON serializer for games"""
