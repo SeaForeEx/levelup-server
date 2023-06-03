@@ -43,7 +43,7 @@ class GameView(ViewSet):
         uid = request.META['HTTP_AUTHORIZATION']
         gamer = Gamer.objects.get(uid=uid)
         games = Game.objects.annotate(event_count=Count(
-            'events'), user_event_count_annotation=Count('events', filter=Q(events__organizer=gamer)))
+            'events'), user_event_count=Count('events', filter=Q(events__organizer=gamer)))
         
         # filters games based on game type
         game_type = request.query_params.get('type', None)
@@ -83,6 +83,7 @@ class GameView(ViewSet):
 class GameSerializer(serializers.ModelSerializer):
     """JSON serializer for games"""
     event_count = serializers.IntegerField(default=None)
+    user_event_count = serializers.IntegerField(default=None)
     class Meta:
         model = Game
         fields = ('id', 'game_type', 'title', 'maker', 'gamer', 'number_of_players', 'skill_level', 'event_count', 'event_info', 'user_event_count')
