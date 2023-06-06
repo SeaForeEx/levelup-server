@@ -14,13 +14,26 @@ class EventView(ViewSet):
     
     def create(self, request):
         """POST Event
-        Returns JSON instance
+
+        Args:
+            request (Request): The HTTP request
+
+        Returns:
+            Response: JSON instance of the created event
         """
-        
+        # Get the Gamer instance associated with the current user
         organizer = Gamer.objects.get(uid=request.META['HTTP_AUTHORIZATION'])
+        
+        # Initialize the CreateEventSerializer with the request data
         serializer = CreateEventSerializer(data=request.data)
+        
+        # Validate the serializer data and raise an exception if it's not valid
         serializer.is_valid(raise_exception=True)
+        
+        # Save the event with the associated organizer
         serializer.save(organizer=organizer)
+        
+        # Return the serialized event data as a JSON response with a 201 Created status
         return Response(serializer.data, status=status.HTTP_201_CREATED)
   
         # organizer = Gamer.objects.get(uid=request.data["userId"])
